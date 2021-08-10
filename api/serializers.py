@@ -8,8 +8,9 @@ class StudyBoardSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = StudyBoard
-        fields = ['StudyBoard_key','userId','title','description','userBigCity','userSmallCity',
-                  'userDetailCity','gatherMember']
+        fields = '__all__'
+        # fields = ['StudyBoard_key','userId','title','description','userBigCity','userSmallCity',
+        #           'userDetailCity','gatherMember']
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -33,6 +34,12 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = '__all__'
 
+class CurrentUserSerializer(serializers.Serializer):
+
+    id = serializers.IntegerField()
+    class Meta:
+        model = User
+        fields = ['id']
     # def get_comments(self,obj):
     #     comment_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M")
     #     model= Comment
