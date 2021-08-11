@@ -1,5 +1,5 @@
-from .models import StudyBoard,Comment
-from .serializers import StudyBoardSerializer,CommentSerializer
+from .models import StudyBoard,Comment,Applicant
+from .serializers import StudyBoardSerializer,CommentSerializer,ApplicantSerializer
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -38,7 +38,7 @@ class StudyBoard_detail(APIView):
 
     def get_object(self,id):
         try:
-            return StudyBoard.objects.get(id=id)
+            return StudyBoard.objects.get(StudyBoard_key=id)
         except:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -124,4 +124,68 @@ class Comments_detail_byID(APIView):
 
         one_Comment = get_object_or_404(Comment,id=id)
         one_Comment.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class Applicant_list(APIView):
+
+    permission_classes = [IsAuthenticated]
+    authentication_classes = (TokenAuthentication,)
+
+    def get(self, request):
+        applicants = Applicant.objects.all()
+        serialized_applicants = ApplicantSerializer(applicants, many=True)
+        return Response(serialized_applicants.data)
+
+    def post(self, request):
+        serialized_applicants = ApplicantSerializer(data=request.data)
+        if serialized_applicants.is_valid():
+            serialized_applicants.save()
+            return Response(serialized_applicants.data, status=status.HTTP_201_CREATED)
+        return Response(serialized_applicants.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class Applicant_detail(APIView):
+
+    permission_classes = [IsAuthenticated]
+    authentication_classes = (TokenAuthentication,)
+
+    def get(self, request, comment_pk):
+
+        applicants = Applicant.objects.filter(StudyBoard_key=comment_pk)
+        serialized_applicants = ApplicantSerializer(applicants, many=True)
+        return Response(serialized_applicants.data)
+
+    def post(self, request,comment_pk):
+        serialized_applicants = ApplicantSerializer(data=request.data)
+        if serialized_applicants.is_valid():
+            serialized_applicants.save()
+            return Response(serialized_applicants.data, status=status.HTTP_201_CREATED)
+        return Response(serialized_applicants.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class Applicant_detail_byID(APIView):
+
+    permission_classes = [IsAuthenticated]
+    authentication_classes = (TokenAuthentication,)
+
+    def get(self, request,comment_pk, id):
+        try:
+            one_applicant = Applicant.objects.filter(User_key=id)
+        except:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serialized_one_applicant = ApplicantSerializer(one_applicant,many=True)
+        return Response(serialized_one_applicant.data)
+
+    def put(self,request,comment_pk,id):
+
+        one_applicant = get_object_or_404(Applicant, User_key=id)
+        serialized_one_applicant = ApplicantSerializer(one_applicant,data=request.data)
+        if serialized_one_applicant.is_valid():
+            serialized_one_applicant.save()
+            return Response(serialized_one_applicant.data)
+        return Response(serialized_one_applicant.errors,status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self,request,comment_pk,id):
+
+        one_applicant = get_object_or_404(Applicant,User_key=id)
+        one_applicant.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -30,3 +30,13 @@ class Comment(models.Model) :
     # def __str__(self):
         # return self.id
 
+class Applicant(models.Model):
+    """
+    StudyBoard_key = models.ForeignKey(StudyBoard,on_delete=models.CASCADE, null=True)
+    apply_user = models.CharField(max_length=20)
+    User_key = models.ForeignKey(User,on_delete=models.CASCADE, null=True)
+    """
+    StudyBoard_key = models.ForeignKey(StudyBoard,on_delete=models.CASCADE, null=True)
+    apply_user = models.CharField(max_length=20)
+    User_key = models.ForeignKey(User,unique=True,on_delete=models.CASCADE, null=True)
+    condition = models.IntegerField(default=0)

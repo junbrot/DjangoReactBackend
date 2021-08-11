@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import StudyBoard,Comment
+from .models import StudyBoard,Comment,Applicant
 from django.contrib.auth.models import User
 from rest_framework.authtoken.views import Token
 
@@ -34,12 +34,18 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = '__all__'
 
-class CurrentUserSerializer(serializers.Serializer):
 
-    id = serializers.IntegerField()
+class ApplicantSerializer(serializers.ModelSerializer):
+
     class Meta:
-        model = User
-        fields = ['id']
+        model = Applicant
+        fields = '__all__'
+# class CurrentUserSerializer(serializers.Serializer):
+#
+#     id = serializers.IntegerField()
+#     class Meta:
+#         model = User
+#         fields = ['id']
     # def get_comments(self,obj):
     #     comment_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M")
     #     model= Comment
