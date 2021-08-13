@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# Create your models here.
 class StudyBoard(models.Model):
 
     User_key = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
@@ -9,15 +8,14 @@ class StudyBoard(models.Model):
     userId = models.CharField(max_length=20)
     title = models.CharField(max_length=50)
     description = models.CharField(max_length=500, default='')
-    userBigCity = models.CharField(max_length=10)
-    userSmallCity = models.CharField(max_length=10)
-    userDetailCity = models.CharField(max_length=100)
+    # userBigCity = models.CharField(max_length=10)
+    # userSmallCity = models.CharField(max_length=10)
+    # userDetailCity = models.CharField(max_length=100)
     gatherMember = models.IntegerField(default=4)
+    ApplyMember = models.IntegerField(default=1)
     lookupCount = models.IntegerField(default=0)
     uploadDate = models.DateTimeField(auto_now_add=True)
 
-    # def __str__(self):
-    #     return self.StudyBoard_key
 
 class Comment(models.Model) :
 
@@ -27,16 +25,19 @@ class Comment(models.Model) :
     comment_textfield = models.CharField(max_length=200)
     User_key = models.ForeignKey(User,on_delete=models.CASCADE, null=True)
 
-    # def __str__(self):
-        # return self.id
 
 class Applicant(models.Model):
-    """
+
     StudyBoard_key = models.ForeignKey(StudyBoard,on_delete=models.CASCADE, null=True)
     apply_user = models.CharField(max_length=20)
-    User_key = models.ForeignKey(User,on_delete=models.CASCADE, null=True)
-    """
-    StudyBoard_key = models.ForeignKey(StudyBoard,on_delete=models.CASCADE, null=True)
-    apply_user = models.CharField(max_length=20)
-    User_key = models.ForeignKey(User,unique=True,on_delete=models.CASCADE, null=True)
-    condition = models.IntegerField(default=0)
+    User_key = models.OneToOneField(User,on_delete=models.CASCADE, null=True)
+
+class Study(models.Model):
+
+    User_key = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    # title = models.CharField(max_length=50)
+
+class StudyMember(models.Model):
+
+    Study_key = models.ForeignKey(Study,on_delete=models.CASCADE,null=True)
+    User_key = models.OneToOneField(User, on_delete=models.CASCADE, null=True)

@@ -1,13 +1,13 @@
 from django.contrib import admin
-from .models import StudyBoard,Comment,Applicant
+from .models import StudyBoard,Comment,Applicant,Study,StudyMember
 from django.contrib.auth.models import User
 
 # Register your models here.
 @admin.register(StudyBoard)
 class StudyBoardModel(admin.ModelAdmin):
 
-    list_filter = ('StudyBoard_key','User_key','userId','title','userBigCity','userSmallCity','userDetailCity','lookupCount','uploadDate')
-    list_display = ('StudyBoard_key','User_key','userId','title','userBigCity','userSmallCity','userDetailCity','lookupCount','uploadDate')
+    list_filter = ('StudyBoard_key','User_key','userId','title','lookupCount','uploadDate')
+    list_display = ('StudyBoard_key','User_key','userId','title','lookupCount','uploadDate')
 
 @admin.register(Comment)
 class CommentModel(admin.ModelAdmin):
@@ -18,4 +18,10 @@ class CommentModel(admin.ModelAdmin):
 class ApplicantModel(admin.ModelAdmin):
     lint_filter = ('id','StudyBoard_key','User_key','apply_user','apply_textfield')
 
+@admin.register(Study)
+class StudyModel(admin.ModelAdmin):
+    lint_filter = ('id','User_key')
 
+@admin.register(StudyMember)
+class StudyMemberModel(admin.ModelAdmin):
+    lint_filter = ('id','Study_key','User_key')

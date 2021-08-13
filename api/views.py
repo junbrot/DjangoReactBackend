@@ -1,5 +1,5 @@
-from .models import StudyBoard,Comment,Applicant
-from .serializers import StudyBoardSerializer,CommentSerializer,ApplicantSerializer
+from .models import StudyBoard,Comment,Applicant,Study,StudyMember
+from .serializers import StudyBoardSerializer,CommentSerializer,ApplicantSerializer,StudySerializer,StudyMemberSerializer
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -62,10 +62,25 @@ class StudyBoard_detail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(viewsets.ViewSet):
 
-    serializer_class = UserSerializer
-    queryset = User.objects.all()
+    def list(self, request):
+        queryset = User.objects.all()
+        serializer = UserSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def post(self,request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, pk):
+        queryset = User.objects.all()
+        user = get_object_or_404(queryset, username=pk)
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
 
 
 class Comments_list(APIView):
@@ -189,3 +204,98 @@ class Applicant_detail_byID(APIView):
         one_applicant = get_object_or_404(Applicant,User_key=id)
         one_applicant.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class Study_list(APIView):
+
+    permission_classes = [IsAuthenticated]
+    authentication_classes = (TokenAuthentication,)
+
+    def get(self,request):
+        Studys = Study.objects.all()
+        serialized_Studys = StudySerializer(Studys,many=True)
+        return Response(serialized_Studys.data)
+
+    def post(self,request):
+        serialized_Studys = StudySerializer(data=request.data)
+        if serialized_Studys.is_valid():
+            serialized_Studys.save()
+            return Response(serialized_Studys.data, status=status.HTTP_201_CREATED)
+        return Response(serialized_Studys.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class Study_detail(APIView):
+
+    permission_classes = [IsAuthenticated]
+    authentication_classes = (TokenAuthentication,)
+
+    def get_object(self,id):
+        try:
+            return Study.objects.get(User_key=id)
+        except:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def get(self,request,id):
+        one_Study = self.get_object(id)
+        serialized_one_Study = StudySerializer(one_Study)
+
+        return Response(serialized_one_Study.data)
+    """
+    def put(self,request,id):
+        one_StudyBoard = self.get_object(id)
+        serialized_one_StudyBoard = StudyBoardSerializer(one_StudyBoard,data=request.data)
+        if serialized_one_StudyBoard.is_valid():
+            serialized_one_StudyBoard.save()
+            return Response(serialized_one_StudyBoard.data)
+        return Response(serialized_one_StudyBoard.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self,request,id):
+        one_StudyBoard = self.get_object(id)
+        one_StudyBoard.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    """
+
+class StudyMember_list(APIView):
+
+    permission_classes = [IsAuthenticated]
+    authentication_classes = (TokenAuthentication,)
+
+    def get(self,request):
+        studymembers = StudyMember.objects.all()
+        serialized_studymembers = StudyMemberSerializer(studymembers,many=True)
+        return Response(serialized_studymembers.data)
+
+    # def post(self,request):
+    #     serialized_studymembers = StudyMemberSerializer(data=request.data)
+    #     if serialized_studymembers.is_valid():
+    #         serialized_studymembers.save()
+    #         return Response(serialized_studymembers.data, status=status.HTTP_201_CREATED)
+    #     return Response(serialized_studymembers.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class StudyMember_detail(APIView):
+
+    permission_classes = [IsAuthenticated]
+    authentication_classes = (TokenAuthentication,)
+
+    def get(self, request, id):
+
+        studymembers = StudyMember.objects.filter(Study_key=id)
+        serialized_studymembers = StudyMemberSerializer(studymembers, many=True)
+        return Response(serialized_studymembers.data)
+
+    def post(self, request,id):
+        serialized_studymembers = StudyMemberSerializer(data=request.data)
+        if serialized_studymembers.is_valid():
+            serialized_studymembers.save()
+            return Response(serialized_studymembers.data, status=status.HTTP_201_CREATED)
+        return Response(serialized_studymembers.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class StudyMember_for_Key(APIView):
+
+    permission_classes = [IsAuthenticated]
+    authentication_classes = (TokenAuthentication,)
+
+    def get(self, request, id):
+
+        studymember = StudyMember.objects.filter(User_key=id)
+        serialized_studymember = StudyMemberSerializer(studymember, many=True)
+        return Response(serialized_studymember.data)

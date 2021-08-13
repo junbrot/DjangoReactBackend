@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import StudyBoard,Comment,Applicant
+from .models import StudyBoard,Comment,Applicant,Study,StudyMember
 from django.contrib.auth.models import User
 from rest_framework.authtoken.views import Token
 
@@ -9,8 +9,6 @@ class StudyBoardSerializer(serializers.ModelSerializer):
     class Meta:
         model = StudyBoard
         fields = '__all__'
-        # fields = ['StudyBoard_key','userId','title','description','userBigCity','userSmallCity',
-        #           'userDetailCity','gatherMember']
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -40,13 +38,15 @@ class ApplicantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Applicant
         fields = '__all__'
-# class CurrentUserSerializer(serializers.Serializer):
-#
-#     id = serializers.IntegerField()
-#     class Meta:
-#         model = User
-#         fields = ['id']
-    # def get_comments(self,obj):
-    #     comment_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M")
-    #     model= Comment
-    #     fields = '__all__'
+
+class StudySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Study
+        fields = '__all__'
+
+class StudyMemberSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = StudyMember
+        fields = '__all__'
