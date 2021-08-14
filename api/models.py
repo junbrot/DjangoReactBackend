@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MaxValueValidator,MinValueValidator
+from django.utils import timezone
 
 class StudyBoard(models.Model):
 
@@ -8,14 +10,11 @@ class StudyBoard(models.Model):
     userId = models.CharField(max_length=20)
     title = models.CharField(max_length=50)
     description = models.CharField(max_length=500, default='')
-    # userBigCity = models.CharField(max_length=10)
-    # userSmallCity = models.CharField(max_length=10)
-    # userDetailCity = models.CharField(max_length=100)
     gatherMember = models.IntegerField(default=4)
     ApplyMember = models.IntegerField(default=1)
     lookupCount = models.IntegerField(default=0)
     uploadDate = models.DateTimeField(auto_now_add=True)
-
+    duration = models.IntegerField(validators=[MinValueValidator(29),MaxValueValidator(91)],default=30)
 
 class Comment(models.Model) :
 
@@ -35,9 +34,27 @@ class Applicant(models.Model):
 class Study(models.Model):
 
     User_key = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    # title = models.CharField(max_length=50)
+    title = models.CharField(max_length=50, default='')
+    StudyStartTime = models.DateTimeField(auto_now_add=True)
+    duration = models.IntegerField(validators=[MinValueValidator(29),MaxValueValidator(91)],default=30)
 
 class StudyMember(models.Model):
 
     Study_key = models.ForeignKey(Study,on_delete=models.CASCADE,null=True)
     User_key = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+
+class StudyPlanner(models.Model):
+
+    Study_key = models.ForeignKey(Study, on_delete=models.CASCADE, null=True)
+    User_key = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    userId = models.CharField(max_length=20,default='')
+    title = models.CharField(max_length=50, default='')
+
+class StudyPlannerComponent(models.Model):
+
+    Study_key = models.ForeignKey(Study, on_delete=models.CASCADE, null=True)
+    User_key = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    StudyPlanner_key = models.ForeignKey(StudyPlanner, on_delete=models.CASCADE, null=True)
+    title = models.CharField(max_length=50, default='')
+    StudyPlannerComponentStartTime = models.DateTimeField(auto_now_add=True)
+    duration = models.IntegerField(default=30)

@@ -1,13 +1,13 @@
 from django.contrib import admin
-from .models import StudyBoard,Comment,Applicant,Study,StudyMember
+from .models import StudyBoard,Comment,Applicant,Study,StudyMember,StudyPlanner,StudyPlannerComponent
 from django.contrib.auth.models import User
 
 # Register your models here.
 @admin.register(StudyBoard)
 class StudyBoardModel(admin.ModelAdmin):
 
-    list_filter = ('StudyBoard_key','User_key','userId','title','lookupCount','uploadDate')
-    list_display = ('StudyBoard_key','User_key','userId','title','lookupCount','uploadDate')
+    list_filter = ('StudyBoard_key','User_key','userId','title','lookupCount','uploadDate','duration')
+    list_display = ('StudyBoard_key','User_key','userId','title','lookupCount','uploadDate','duration')
 
 @admin.register(Comment)
 class CommentModel(admin.ModelAdmin):
@@ -16,12 +16,25 @@ class CommentModel(admin.ModelAdmin):
 
 @admin.register(Applicant)
 class ApplicantModel(admin.ModelAdmin):
-    lint_filter = ('id','StudyBoard_key','User_key','apply_user','apply_textfield')
+    list_filter = ('id','StudyBoard_key','User_key','apply_user')
+    list_display = ('id', 'StudyBoard_key', 'User_key', 'apply_user')
 
 @admin.register(Study)
 class StudyModel(admin.ModelAdmin):
-    lint_filter = ('id','User_key')
+    list_filter = ('id','User_key','StudyStartTime','duration')
+    list_display = ('id', 'User_key', 'StudyStartTime','duration')
 
 @admin.register(StudyMember)
 class StudyMemberModel(admin.ModelAdmin):
-    lint_filter = ('id','Study_key','User_key')
+    list_filter = ('id','Study_key','User_key')
+    list_display = ('id', 'Study_key', 'User_key')
+
+@admin.register(StudyPlanner)
+class StudyPlannerModel(admin.ModelAdmin):
+    list_filter = ('id','Study_key','User_key','title')
+    list_display = ('id', 'Study_key', 'User_key','title')
+
+@admin.register(StudyPlannerComponent)
+class StudyPlannerComponentModel(admin.ModelAdmin):
+    list_filter = ('id','Study_key','User_key','StudyPlanner_key','title','StudyPlannerComponentStartTime','duration')
+    list_display = ('id', 'Study_key', 'User_key','title')

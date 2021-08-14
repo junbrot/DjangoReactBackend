@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import StudyBoard,Comment,Applicant,Study,StudyMember
+from .models import StudyBoard,Comment,Applicant,Study,StudyMember,StudyPlanner,StudyPlannerComponent
 from django.contrib.auth.models import User
 from rest_framework.authtoken.views import Token
 
@@ -49,4 +49,16 @@ class StudyMemberSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = StudyMember
+        fields = '__all__'
+
+class StudyPlannerSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = StudyPlanner
+        fields = '__all__'
+
+
+class StudyPlannerComponentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudyPlannerComponent
         fields = '__all__'

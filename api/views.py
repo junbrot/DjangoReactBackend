@@ -1,5 +1,8 @@
-from .models import StudyBoard,Comment,Applicant,Study,StudyMember
-from .serializers import StudyBoardSerializer,CommentSerializer,ApplicantSerializer,StudySerializer,StudyMemberSerializer
+from .models import StudyBoard,Comment,Applicant
+from .models import Study,StudyMember,StudyPlanner,StudyPlannerComponent
+from .serializers import StudyBoardSerializer,CommentSerializer,ApplicantSerializer
+from .serializers import StudySerializer,StudyMemberSerializer,StudyPlannerSerializer,StudyPlannerComponentSerializer
+
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -7,11 +10,11 @@ from django.contrib.auth.models import User
 from .serializers import UserSerializer
 
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
 from rest_framework.decorators import APIView
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 
+from datetime import timedelta
 
 class StudyBoard_list(APIView):
 
@@ -216,6 +219,7 @@ class Study_list(APIView):
         return Response(serialized_Studys.data)
 
     def post(self,request):
+
         serialized_Studys = StudySerializer(data=request.data)
         if serialized_Studys.is_valid():
             serialized_Studys.save()
@@ -229,7 +233,7 @@ class Study_detail(APIView):
 
     def get_object(self,id):
         try:
-            return Study.objects.get(User_key=id)
+            return Study.objects.get(id=id)
         except:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -238,15 +242,17 @@ class Study_detail(APIView):
         serialized_one_Study = StudySerializer(one_Study)
 
         return Response(serialized_one_Study.data)
-    """
-    def put(self,request,id):
-        one_StudyBoard = self.get_object(id)
-        serialized_one_StudyBoard = StudyBoardSerializer(one_StudyBoard,data=request.data)
-        if serialized_one_StudyBoard.is_valid():
-            serialized_one_StudyBoard.save()
-            return Response(serialized_one_StudyBoard.data)
-        return Response(serialized_one_StudyBoard.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def put(self,request,id):
+        one_Study = self.get_object(id)
+        serialized_one_Study = StudySerializer(one_Study,data=request.data)
+
+        if serialized_one_Study.is_valid():
+            serialized_one_Study.save()
+            return Response(serialized_one_Study.data)
+        return Response(serialized_one_Study.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    """
     def delete(self,request,id):
         one_StudyBoard = self.get_object(id)
         one_StudyBoard.delete()
@@ -262,14 +268,6 @@ class StudyMember_list(APIView):
         studymembers = StudyMember.objects.all()
         serialized_studymembers = StudyMemberSerializer(studymembers,many=True)
         return Response(serialized_studymembers.data)
-
-    # def post(self,request):
-    #     serialized_studymembers = StudyMemberSerializer(data=request.data)
-    #     if serialized_studymembers.is_valid():
-    #         serialized_studymembers.save()
-    #         return Response(serialized_studymembers.data, status=status.HTTP_201_CREATED)
-    #     return Response(serialized_studymembers.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class StudyMember_detail(APIView):
 
@@ -299,3 +297,118 @@ class StudyMember_for_Key(APIView):
         studymember = StudyMember.objects.filter(User_key=id)
         serialized_studymember = StudyMemberSerializer(studymember, many=True)
         return Response(serialized_studymember.data)
+
+class StudyPlanner_list(APIView):
+
+    permission_classes = [IsAuthenticated]
+    authentication_classes = (TokenAuthentication,)
+
+    def get(self,request):
+        studyplanners =  StudyPlanner.objects.all()
+        serialized_studyplanners = StudyPlannerSerializer(studyplanners,many=True)
+        return Response(serialized_studyplanners.data)
+
+class StudyPlanner_detail(APIView):
+
+    permission_classes = [IsAuthenticated]
+    authentication_classes = (TokenAuthentication,)
+
+    def get(self, request, id):
+
+        studyplanners =  StudyPlanner.objects.filter(Study_key=id)
+        serialized_studyplanners = StudyPlannerSerializer(studyplanners, many=True)
+        return Response(serialized_studyplanners.data)
+
+    def post(self, request,id):
+        serialized_studyplanners = StudyPlannerSerializer(data=request.data)
+        if serialized_studyplanners.is_valid():
+            serialized_studyplanners.save()
+            return Response(serialized_studyplanners.data, status=status.HTTP_201_CREATED)
+        return Response(serialized_studyplanners.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class StudyPlanner_detail_byID(APIView):
+
+    def get(self, request, comment_pk, id):
+        try:
+            studyplanner =  StudyPlanner.objects.filter(id=id)
+        except:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serialized_studyplanners = StudyPlannerSerializer(studyplanner, many=True)
+        return Response(serialized_studyplanners.data)
+
+    def put(self, request, comment_pk, id):
+
+        studyplanner = get_object_or_404(StudyPlanner, id=id)
+        serialized_studyplanner = StudyPlannerSerializer(studyplanner, data=request.data)
+        if serialized_studyplanner.is_valid():
+            serialized_studyplanner.save()
+            return Response(serialized_studyplanner.data)
+        return Response(serialized_studyplanner.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, comment_pk, id):
+
+        studyplanner = get_object_or_404(StudyPlanner, id=id)
+        studyplanner.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class StudyPlannerComponent_list(APIView):
+
+    permission_classes = [IsAuthenticated]
+    authentication_classes = (TokenAuthentication,)
+
+    def get(self,request):
+        studyplannercomponent =  StudyPlannerComponent.objects.all()
+        serialized_studyplannercomponent = StudyPlannerComponentSerializer(studyplannercomponent,many=True)
+        return Response(serialized_studyplannercomponent.data)
+
+class StudyPlannerComponent_detail(APIView):
+
+    permission_classes = [IsAuthenticated]
+    authentication_classes = (TokenAuthentication,)
+
+    def get(self, request, id):
+
+        studyplannercomponent =  StudyPlannerComponent.objects.filter(Study_key=id)
+        serialized_studyplannercomponent = StudyPlannerComponentSerializer(studyplannercomponent, many=True)
+        return Response(serialized_studyplannercomponent.data)
+
+class StudyPlannerComponent_detail_byStudyPlannerID(APIView):
+
+    def get(self, request,id2, id):
+
+        studyplannercomponent = StudyPlannerComponent.objects.filter(StudyPlanner_key=id)
+        serialized_studyplannercomponent = StudyPlannerComponentSerializer(studyplannercomponent, many=True)
+        return Response(serialized_studyplannercomponent.data)
+
+    def post(self, request,id2,id):
+        serialized_studyplannercomponent = StudyPlannerComponentSerializer(data=request.data)
+        if serialized_studyplannercomponent.is_valid():
+            serialized_studyplannercomponent.save()
+            return Response(serialized_studyplannercomponent.data, status=status.HTTP_201_CREATED)
+        return Response(serialized_studyplannercomponent.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class StudyPlannerComponent_Maxdetail_byID(APIView):
+
+    def get(self, request2,id3,id2,id):
+        try:
+            studyplannercomponent = StudyPlannerComponent.objects.filter(id=id)
+        except:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serialized_studyplannercomponent = StudyPlannerComponentSerializer(studyplannercomponent, many=True)
+        return Response(serialized_studyplannercomponent.data)
+
+
+    def put(self, request,id3,id2, id):
+
+        studyplannercomponent = get_object_or_404(StudyPlannerComponent, id=id)
+        serialized_studyplannercomponent =StudyPlannerComponentSerializer(studyplannercomponent, data=request.data)
+        if serialized_studyplannercomponent.is_valid():
+            serialized_studyplannercomponent.save()
+            return Response(serialized_studyplannercomponent.data)
+        return Response(serialized_studyplannercomponent.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request,id3,id2 ,id):
+
+        studyplannercomponent = get_object_or_404(StudyPlannerComponent, id=id)
+        studyplannercomponent.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
