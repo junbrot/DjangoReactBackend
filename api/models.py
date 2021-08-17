@@ -54,7 +54,9 @@ class StudyPlannerComponent(models.Model):
 
     Study_key = models.ForeignKey(Study, on_delete=models.CASCADE, null=True)
     User_key = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    userId = models.CharField(max_length=20, default='')
     StudyPlanner_key = models.ForeignKey(StudyPlanner, on_delete=models.CASCADE, null=True)
     title = models.CharField(max_length=50, default='')
     StudyPlannerComponentStartTime = models.DateTimeField(auto_now_add=True)
     duration = models.IntegerField(default=30)
+    condition = models.IntegerField(default=0)

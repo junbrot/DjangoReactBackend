@@ -326,6 +326,14 @@ class StudyPlanner_detail(APIView):
             return Response(serialized_studyplanners.data, status=status.HTTP_201_CREATED)
         return Response(serialized_studyplanners.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def post(self, request,id):
+        serialized_studyplanners = StudyPlannerSerializer(data=request.data)
+        if serialized_studyplanners.is_valid():
+            serialized_studyplanners.save()
+            return Response(serialized_studyplanners.data, status=status.HTTP_201_CREATED)
+        return Response(serialized_studyplanners.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class StudyPlanner_detail_byID(APIView):
 
     def get(self, request, comment_pk, id):
