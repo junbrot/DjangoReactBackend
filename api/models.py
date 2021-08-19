@@ -60,3 +60,11 @@ class StudyPlannerComponent(models.Model):
     StudyPlannerComponentStartTime = models.DateTimeField(auto_now_add=True)
     duration = models.IntegerField(default=30)
     condition = models.IntegerField(default=0)
+
+class StudyComment(models.Model) :
+
+    Study_key = models.ForeignKey(Study,on_delete=models.CASCADE, null=True)
+    comment_date = models.DateTimeField(auto_now_add=True)
+    comment_user = models.CharField(max_length=20)
+    comment_textfield = models.CharField(max_length=200)
+    User_key = models.ForeignKey(User,on_delete=models.CASCADE, null=True)

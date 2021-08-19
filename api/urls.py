@@ -8,6 +8,7 @@ from .views import StudyMember_list,StudyMember_detail,StudyMember_for_Key
 from .views import StudyPlanner_list,StudyPlanner_detail,StudyPlanner_detail_byID
 from .views import StudyPlannerComponent_list,StudyPlannerComponent_detail,StudyPlannerComponent_detail_byStudyPlannerID
 from .views import StudyPlannerComponent_Maxdetail_byID
+from .views import StudyComment_list,StudyComment_detail,StudyComment_detail_byID
 from rest_framework.routers import DefaultRouter
 
 # router = DefaultRouter()
@@ -44,6 +45,9 @@ urlpatterns = [
     path('api/StudyPlannerComponents/<int:id>/',StudyPlannerComponent_detail.as_view()),
     path('api/StudyPlannerComponents/<int:id2>/<int:id>/',StudyPlannerComponent_detail_byStudyPlannerID.as_view()),
     path('api/StudyPlannerComponents/<int:id3>/<int:id2>/<int:id>/',StudyPlannerComponent_Maxdetail_byID.as_view()),
+    path('api/StudyComments/',StudyComment_list.as_view()),
+    path('api/StudyComments/<int:id>/',StudyComment_detail.as_view()),
+    path('api/StudyComments/<int:comment_pk>/<int:id>/',StudyComment_detail_byID.as_view()),
     path('api/',include(router.urls)),
     # path('api/users/',UserViewSet.as_view({'get'}),name='User_list'),
     # path('api/users/<int:id>/',UserViewSet.as_view({'retrieve'}),name='User_list'),

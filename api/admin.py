@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import StudyBoard,Comment,Applicant,Study,StudyMember,StudyPlanner,StudyPlannerComponent
+from .models import StudyBoard,Comment,Applicant
+from .models import Study,StudyMember,StudyPlanner,StudyPlannerComponent,StudyComment
 from django.contrib.auth.models import User
 
 # Register your models here.
@@ -38,3 +39,8 @@ class StudyPlannerModel(admin.ModelAdmin):
 class StudyPlannerComponentModel(admin.ModelAdmin):
     list_filter = ('id','Study_key','User_key','StudyPlanner_key','title','StudyPlannerComponentStartTime','duration')
     list_display = ('id', 'Study_key', 'User_key','title')
+
+@admin.register(StudyComment)
+class StudyCommentModel(admin.ModelAdmin):
+    list_filter = ('id','Study_key','User_key','comment_date', 'comment_user', 'comment_textfield')
+    list_display = ('id','Study_key','User_key','comment_date', 'comment_user', 'comment_textfield')

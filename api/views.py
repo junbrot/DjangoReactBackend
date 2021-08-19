@@ -1,7 +1,9 @@
 from .models import StudyBoard,Comment,Applicant
 from .models import Study,StudyMember,StudyPlanner,StudyPlannerComponent
+from .models import StudyComment
 from .serializers import StudyBoardSerializer,CommentSerializer,ApplicantSerializer
 from .serializers import StudySerializer,StudyMemberSerializer,StudyPlannerSerializer,StudyPlannerComponentSerializer
+from .serializers import StudyCommentSerializer
 
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
@@ -326,13 +328,6 @@ class StudyPlanner_detail(APIView):
             return Response(serialized_studyplanners.data, status=status.HTTP_201_CREATED)
         return Response(serialized_studyplanners.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def post(self, request,id):
-        serialized_studyplanners = StudyPlannerSerializer(data=request.data)
-        if serialized_studyplanners.is_valid():
-            serialized_studyplanners.save()
-            return Response(serialized_studyplanners.data, status=status.HTTP_201_CREATED)
-        return Response(serialized_studyplanners.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class StudyPlanner_detail_byID(APIView):
 
@@ -419,4 +414,58 @@ class StudyPlannerComponent_Maxdetail_byID(APIView):
 
         studyplannercomponent = get_object_or_404(StudyPlannerComponent, id=id)
         studyplannercomponent.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class StudyComment_list(APIView):
+
+    permission_classes = [IsAuthenticated]
+    authentication_classes = (TokenAuthentication,)
+
+    def get(self,request):
+        studycomments =  StudyComment.objects.all()
+        serialized_studycomments = StudyCommentSerializer(studycomments,many=True)
+        return Response(serialized_studycomments.data)
+
+class StudyComment_detail(APIView):
+
+    permission_classes = [IsAuthenticated]
+    authentication_classes = (TokenAuthentication,)
+
+    def get(self, request, id):
+
+        studycomments =  StudyComment.objects.filter(Study_key=id)
+        serialized_studycomments = StudyCommentSerializer(studycomments, many=True)
+        return Response(serialized_studycomments.data)
+
+    def post(self, request,id):
+        serialized_studycomments = StudyCommentSerializer(data=request.data)
+        if serialized_studycomments.is_valid():
+            serialized_studycomments.save()
+            return Response(serialized_studycomments.data, status=status.HTTP_201_CREATED)
+        return Response(serialized_studycomments.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class StudyComment_detail_byID(APIView):
+
+    def get(self, request, comment_pk, id):
+        try:
+            studycomment =  StudyComment.objects.filter(id=id)
+        except:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serialized_studycomment = StudyCommentSerializer(studycomment, many=True)
+        return Response(serialized_studycomment.data)
+
+    def put(self, request, comment_pk, id):
+
+        studycomment = get_object_or_404(StudyComment, id=id)
+        serialized_studycomment = StudyCommentSerializer(studycomment, data=request.data)
+        if serialized_studycomment.is_valid():
+            serialized_studycomment.save()
+            return Response(serialized_studycomment.data)
+        return Response(serialized_studycomment.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, comment_pk, id):
+
+        studycomment = get_object_or_404(StudyComment, id=id)
+        studycomment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
